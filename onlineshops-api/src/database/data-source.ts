@@ -1,10 +1,12 @@
 import 'reflect-metadata';
-import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
+import { DataSource, DataSourceOptions } from 'typeorm';
 
 // Load environment variables for CLI usage
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 config({ path: '.env.local' });
 config({ path: '.env' });
+/* eslint-enable @typescript-eslint/no-unsafe-call */
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',

@@ -1,4 +1,7 @@
 services:
+  # ================================
+  # PostgreSQL Database
+  # ================================
   postgres:
     image: postgres:16-alpine
     container_name: onlineshops-postgres
@@ -16,12 +19,67 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - onlineshops-network
 
-  # Optional: pgAdmin for database management UI
+  # ================================
+  # NestJS API Backend
+  # ================================
+  api:
+    build:
+      context: ./onlineshops-api
+      dockerfile: Dockerfile
+    container_name: onlineshops-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: onlineshops
+      DATABASE_SSL: 'false'
+      DATABASE_LOGGING: 'false'
+      CORS_ORIGIN: http://localhost:3000
+      JWT_SECRET: change-this-in-production
+    ports:
+      - '3001:3001'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - onlineshops-network
+
+  # ================================
+  # TanStack Start UI Frontend
+  # ================================
+  ui:
+    build:
+      context: ./onlineshop-ui
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3001/api
+    container_name: onlineshops-ui
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+    networks:
+      - onlineshops-network
+
+  # ================================
+  # pgAdmin (Development Only)
+  # ================================
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: onlineshops-pgadmin
     restart: unless-stopped
+    profiles:
+      - dev
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -32,6 +90,12 @@ services:
       - postgres
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - onlineshops-network
+
+networks:
+  onlineshops-network:
+    driver: bridge
 
 volumes:
   postgres_data:

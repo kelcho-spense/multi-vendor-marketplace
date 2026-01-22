@@ -1,98 +1,350 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Online Shops API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend REST API for the Online Shops Management System — a multi-vendor e-commerce platform built with NestJS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech Stack
 
-## Description
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **NestJS** | 11.x | Backend framework |
+| **TypeORM** | 0.3.x | Database ORM |
+| **PostgreSQL** | 16.x | Primary database |
+| **class-validator** | 0.14.x | DTO validation |
+| **class-transformer** | 0.5.x | Object transformation |
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Prerequisites
 
-## Project setup
+- Node.js 20.x or higher
+- pnpm 9.x
+- PostgreSQL 16.x (or Docker)
+
+## Getting Started
+
+### 1. Install Dependencies
 
 ```bash
-$ pnpm install
+pnpm install
 ```
 
-## Compile and run the project
+### 2. Environment Setup
+
+Copy the example environment file:
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+cp .env.example .env
 ```
 
-## Run tests
+Configure your `.env` file:
+
+```env
+# Database
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=password
+DATABASE_NAME=onlineshops
+DATABASE_LOGGING=true
+DATABASE_SSL=false
+
+# App
+PORT=3001
+NODE_ENV=development
+
+# CORS
+CORS_ORIGIN=http://localhost:3000
+```
+
+### 3. Start PostgreSQL
+
+**Option A: Using Docker (Recommended)**
+
+From the project root directory:
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+docker compose up -d
 ```
 
-## Deployment
+This starts:
+- PostgreSQL on `localhost:5432`
+- pgAdmin on `localhost:5050` (admin@example.com / admin)
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+**Option B: Local PostgreSQL**
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Create the database manually:
+
+```sql
+CREATE DATABASE onlineshops;
+```
+
+### 4. Run Migrations
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+pnpm migration:run
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 5. Start the Server
 
-## Resources
+```bash
+# Development (watch mode)
+pnpm start:dev
 
-Check out a few resources that may come in handy when working with NestJS:
+# Production
+pnpm start:prod
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+The API will be available at: `http://localhost:3001/api`
 
-## Support
+## Project Structure
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
+src/
+├── main.ts                    # Application entry point
+├── app.module.ts              # Root module
+├── app.controller.ts          # Health check controller
+├── app.service.ts             # App service
+├── config/
+│   └── database.config.ts     # Database configuration
+├── database/
+│   ├── data-source.ts         # TypeORM CLI DataSource
+│   ├── entities/              # Entity definitions
+│   │   ├── base.entity.ts     # Base entity (id, timestamps)
+│   │   └── index.ts           # Entity exports
+│   ├── migrations/            # Database migrations
+│   └── seeds/                 # Seed data (development)
+├── common/                    # Shared utilities (planned)
+│   ├── decorators/
+│   ├── filters/
+│   ├── guards/
+│   ├── interceptors/
+│   └── pipes/
+└── modules/                   # Feature modules (planned)
+    ├── auth/
+    ├── users/
+    ├── shops/
+    ├── products/
+    └── ...
+```
 
-## Stay in touch
+## Database Migrations
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+TypeORM migrations are used to manage database schema changes in a version-controlled way.
+
+### Migration Commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm migration:generate <path>` | Generate migration from entity changes |
+| `pnpm migration:create <path>` | Create empty migration file |
+| `pnpm migration:run` | Run all pending migrations |
+| `pnpm migration:revert` | Revert the last migration |
+| `pnpm migration:show` | Show migration status |
+| `pnpm schema:sync` | Sync schema directly (dev only) |
+| `pnpm schema:drop` | Drop all tables (dangerous!) |
+
+### Migration Workflow
+
+#### 1. Create/Modify an Entity
+
+```typescript
+// src/database/entities/user.entity.ts
+import { Entity, Column } from 'typeorm';
+import { BaseEntity } from './base.entity';
+
+@Entity('users')
+export class User extends BaseEntity {
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
+}
+```
+
+#### 2. Generate a Migration
+
+```bash
+pnpm migration:generate src/database/migrations/CreateUserTable
+```
+
+This compares your entities with the current database schema and generates the SQL needed to sync them.
+
+#### 3. Review the Migration
+
+Check the generated file in `src/database/migrations/`:
+
+```typescript
+// Example: 1737550000000-CreateUserTable.ts
+export class CreateUserTable1737550000000 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
+      CREATE TABLE "users" (
+        "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+        "email" varchar NOT NULL UNIQUE,
+        "first_name" varchar NOT NULL,
+        "last_name" varchar NOT NULL,
+        "created_at" TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT now()
+      )
+    `);
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE "users"`);
+  }
+}
+```
+
+#### 4. Run the Migration
+
+```bash
+pnpm migration:run
+```
+
+#### 5. Verify Migration Status
+
+```bash
+pnpm migration:show
+```
+
+### Understanding data-source.ts
+
+The `src/database/data-source.ts` file is the **TypeORM CLI configuration** for running migrations outside of NestJS:
+
+| Aspect | `app.module.ts` | `data-source.ts` |
+|--------|-----------------|------------------|
+| Used by | NestJS runtime | TypeORM CLI |
+| Entities | `autoLoadEntities: true` | Glob patterns |
+| Synchronize | Can be `true` in dev | Always `false` |
+
+Both files read from the same `.env` to stay in sync.
+
+### Migration Best Practices
+
+1. **Never use `synchronize: true` in production** — Always use migrations
+2. **Test migrations locally** before pushing to shared environments
+3. **Name migrations descriptively** — `CreateUserTable`, `AddEmailToOrders`
+4. **Review generated SQL** — Auto-generated migrations may need tweaking
+5. **Commit migrations** — They're part of your codebase
+6. **Don't modify executed migrations** — Create new ones instead
+
+## Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `pnpm start` | Start the application |
+| `pnpm start:dev` | Start in watch mode (development) |
+| `pnpm start:debug` | Start with debugger attached |
+| `pnpm start:prod` | Start in production mode |
+| `pnpm build` | Build the application |
+| `pnpm format` | Format code with Prettier |
+| `pnpm lint` | Lint and fix with ESLint |
+| `pnpm test` | Run unit tests |
+| `pnpm test:watch` | Run tests in watch mode |
+| `pnpm test:cov` | Run tests with coverage |
+| `pnpm test:e2e` | Run end-to-end tests |
+
+## API Conventions
+
+### Base URL
+
+All endpoints are prefixed with `/api`:
+
+```
+http://localhost:3001/api/...
+```
+
+### Response Format
+
+**Success:**
+```json
+{
+  "data": { ... },
+  "message": "Operation successful"
+}
+```
+
+**Error:**
+```json
+{
+  "statusCode": 400,
+  "message": "Validation failed",
+  "error": "Bad Request"
+}
+```
+
+### Validation
+
+All DTOs are validated using `class-validator`. Invalid requests return `400 Bad Request` with details:
+
+```json
+{
+  "statusCode": 400,
+  "message": ["email must be an email", "password is too short"],
+  "error": "Bad Request"
+}
+```
+
+## CORS Configuration
+
+CORS is enabled for the frontend origin specified in `CORS_ORIGIN` environment variable (default: `http://localhost:3000`).
+
+Allowed methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`
+
+## Testing
+
+```bash
+# Unit tests
+pnpm test
+
+# E2E tests
+pnpm test:e2e
+
+# Test coverage
+pnpm test:cov
+```
+
+## Troubleshooting
+
+### Database Connection Issues
+
+1. Ensure PostgreSQL is running:
+   ```bash
+   docker compose ps
+   ```
+
+2. Check your `.env` configuration matches your database setup
+
+3. Verify the database exists:
+   ```bash
+   docker compose exec postgres psql -U postgres -c "\l"
+   ```
+
+### Migration Errors
+
+1. **"No changes detected"** — Your entities match the database schema
+2. **"Migration already applied"** — Check with `pnpm migration:show`
+3. **"Cannot find entity"** — Ensure entity is exported in `src/database/entities/index.ts`
+
+### Port Already in Use
+
+```bash
+# Find process using port 3001
+netstat -ano | findstr :3001
+
+# Kill the process (Windows)
+taskkill /PID <PID> /F
+```
+
+## Related Documentation
+
+- [NestJS Documentation](https://docs.nestjs.com)
+- [TypeORM Documentation](https://typeorm.io)
+- [class-validator](https://github.com/typestack/class-validator)
+- [Main Project README](../README.md)
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is part of the Online Shops Management System.

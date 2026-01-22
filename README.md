@@ -17,6 +17,7 @@ A comprehensive multi-vendor marketplace platform (similar to Alibaba) where **s
 - [Authentication & Authorization](#authentication--authorization)
 - [Implementation Roadmap](#implementation-roadmap)
 - [Getting Started](#getting-started)
+- [Docker Deployment](#docker-deployment)
 - [Project Structure](#project-structure)
 
 ---
@@ -988,6 +989,96 @@ pnpm dev
 - Frontend: http://localhost:3000
 - API: http://localhost:3001
 - API Docs: http://localhost:3001/api/docs
+
+---
+
+## Docker Deployment
+
+The project includes Docker configuration for containerized deployment of all services.
+
+### Docker Services
+
+| Service | Container | Port | Description |
+|---------|-----------|------|-------------|
+| `postgres` | onlineshops-postgres | 5432 | PostgreSQL 16 database |
+| `api` | onlineshops-api | 3001 | NestJS backend API |
+| `ui` | onlineshops-ui | 3000 | TanStack Start frontend |
+| `pgadmin` | onlineshops-pgadmin | 5050 | Database admin UI (dev only) |
+
+### Docker Files
+
+| File | Purpose |
+|------|--------|
+| `docker-compose.yml` | Orchestrates all services |
+| `onlineshops-api/Dockerfile` | Multi-stage build for NestJS API |
+| `onlineshop-ui/Dockerfile` | Multi-stage build for TanStack Start UI |
+| `onlineshops-api/.dockerignore` | Excludes files from API build |
+| `onlineshop-ui/.dockerignore` | Excludes files from UI build |
+
+### Docker Commands
+
+#### Build and Start All Services
+
+```bash
+# Build and start (without pgAdmin)
+docker compose up -d --build
+
+# Build and start with pgAdmin (development)
+docker compose --profile dev up -d --build
+```
+
+#### Development Workflow
+
+```bash
+# Start only PostgreSQL for local development
+docker compose up -d postgres
+
+# Start PostgreSQL + pgAdmin
+docker compose --profile dev up -d postgres pgadmin
+```
+
+#### Other Commands
+
+```bash
+# Build images without starting
+docker compose build
+
+# View logs
+docker compose logs -f
+
+# View logs for specific service
+docker compose logs -f api
+
+# Stop all services
+docker compose down
+
+# Stop and remove volumes (clean slate)
+docker compose down -v
+
+# Restart a specific service
+docker compose restart api
+```
+
+### Access Points (Docker)
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| API | http://localhost:3001/api |
+| pgAdmin | http://localhost:5050 (admin@example.com / admin) |
+
+### Production Deployment Notes
+
+1. **Environment Variables**: Update the following in `docker-compose.yml` for production:
+   - `POSTGRES_PASSWORD` - Use a strong password
+   - `JWT_SECRET` - Use a secure random string
+   - `CORS_ORIGIN` - Set to your production frontend URL
+
+2. **SSL/TLS**: Configure a reverse proxy (nginx, Traefik) for HTTPS
+
+3. **Database**: Consider using a managed PostgreSQL service (Azure Database, AWS RDS)
+
+4. **Secrets**: Use Docker secrets or environment variable injection instead of hardcoded values
 
 ---
 

@@ -1,0 +1,50 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build output (we copy this separately)
+dist
+
+# Source control
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage
+.nyc_output
+
+# Test
+test
+*.spec.ts
+
+# Environment files (will be provided at runtime)
+.env
+.env.local
+.env.*.local
+
+# Documentation
+README.md
+docs
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
