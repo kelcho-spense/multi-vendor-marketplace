@@ -2,8 +2,19 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import databaseConfig, { DatabaseConfig } from './config/database.config';
+import { UsersModule } from './users/users.module';
+import { ShopsModule } from './shops/shops.module';
+import { SuppliersModule } from './suppliers/suppliers.module';
+import { ProductsModule } from './products/products.module';
+import { CategoriesModule } from './categories/categories.module';
+import { OrdersModule } from './orders/orders.module';
+import { CartsModule } from './carts/carts.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { SupplierOrdersModule } from './supplier_orders/supplier_orders.module';
+import { AuthModule } from './auth/auth.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -30,8 +41,20 @@ import databaseConfig, { DatabaseConfig } from './config/database.config';
         };
       },
     }),
+    UsersModule,
+    ShopsModule,
+    SuppliersModule,
+    ProductsModule,
+    CategoriesModule,
+    OrdersModule,
+    CartsModule,
+    ReviewsModule,
+    SupplierOrdersModule,
+    AuthModule,
+    InventoryModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}
