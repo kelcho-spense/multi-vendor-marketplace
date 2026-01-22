@@ -6,3 +6,4 @@ export * from './product.enum';
 export * from './shop.enum';
 export * from './supplier.enum';
 export * from './inventory.enum';
+export * from './permission.enum';
