@@ -40,11 +40,12 @@ main (production)
 
 ### Branches
 
-| Branch | Purpose | Base Branch |
-|--------|---------|-------------|
-| `main` | **Production-ready code** — Always stable and deployable | - |
-| `develop` | **Integration branch** — All feature branches merge here | `main` |
-| `feature/*` | **Feature development** — Individual features/modules | `develop` |
+
+| Branch      | Purpose                                                   | Base Branch |
+| ------------- | ----------------------------------------------------------- | ------------- |
+| `main`      | **Production-ready code** — Always stable and deployable | -           |
+| `develop`   | **Integration branch** — All feature branches merge here | `main`      |
+| `feature/*` | **Feature development** — Individual features/modules    | `develop`   |
 
 ### Workflow
 
@@ -130,15 +131,16 @@ This is an **Alibaba-like multi-vendor e-commerce platform** that connects three
 
 ### Key Features
 
-| Feature | Description |
-|---------|-------------|
-| **Multi-Vendor Marketplace** | Multiple shops operating under one platform |
-| **Supplier Network** | Shops can source products from verified suppliers |
-| **User Shopping** | Consumers browse, compare, and buy from any shop |
-| **Inventory Management** | Real-time stock tracking across supply chain |
-| **Order Management** | Full order lifecycle from cart to delivery |
-| **Role-Based Access** | Different dashboards for each user type |
-| **Analytics & Reports** | Sales, inventory, and performance insights |
+
+| Feature                      | Description                                       |
+| ------------------------------ | --------------------------------------------------- |
+| **Multi-Vendor Marketplace** | Multiple shops operating under one platform       |
+| **Supplier Network**         | Shops can source products from verified suppliers |
+| **User Shopping**            | Consumers browse, compare, and buy from any shop  |
+| **Inventory Management**     | Real-time stock tracking across supply chain      |
+| **Order Management**         | Full order lifecycle from cart to delivery        |
+| **Role-Based Access**        | Different dashboards for each user type           |
+| **Analytics & Reports**      | Sales, inventory, and performance insights        |
 
 ---
 
@@ -146,7 +148,7 @@ This is an **Alibaba-like multi-vendor e-commerce platform** that connects three
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              FRONTEND (TanStack Start)                       │
+│                              FRONTEND (TanStack Start)                      │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
 │  │  Shopper    │  │ Shop Owner  │  │  Supplier   │  │    Admin    │         │
 │  │  Dashboard  │  │  Dashboard  │  │  Dashboard  │  │  Dashboard  │         │
@@ -155,7 +157,7 @@ This is an **Alibaba-like multi-vendor e-commerce platform** that connects three
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              API GATEWAY (NestJS)                            │
+│                              API GATEWAY (NestJS)                           │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐           │
 │  │   Auth   │ │   User   │ │   Shop   │ │ Product  │ │  Order   │           │
 │  │  Module  │ │  Module  │ │  Module  │ │  Module  │ │  Module  │           │
@@ -168,7 +170,7 @@ This is an **Alibaba-like multi-vendor e-commerce platform** that connects three
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           DATABASE (PostgreSQL)                              │
+│                           DATABASE (PostgreSQL)                             │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐           │
 │  │  Users   │ │  Shops   │ │ Products │ │  Orders  │ │ Suppliers│           │
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
@@ -181,49 +183,53 @@ This is an **Alibaba-like multi-vendor e-commerce platform** that connects three
 
 ### 1. 🛒 Shopper (Consumer)
 
-| Capability | Description |
-|------------|-------------|
-| Browse Products | Search and filter products across all shops |
-| View Shops | Explore different stores and their offerings |
-| Manage Cart | Add/remove items, adjust quantities |
-| Place Orders | Checkout with shipping and payment |
-| Track Orders | View order status and history |
-| Write Reviews | Rate products and shops |
-| Manage Profile | Update personal info and addresses |
+
+| Capability      | Description                                  |
+| ----------------- | ---------------------------------------------- |
+| Browse Products | Search and filter products across all shops  |
+| View Shops      | Explore different stores and their offerings |
+| Manage Cart     | Add/remove items, adjust quantities          |
+| Place Orders    | Checkout with shipping and payment           |
+| Track Orders    | View order status and history                |
+| Write Reviews   | Rate products and shops                      |
+| Manage Profile  | Update personal info and addresses           |
 
 ### 2. 🏪 Shop Owner (Merchant)
 
-| Capability | Description |
-|------------|-------------|
-| Manage Shop | Create and configure store settings |
-| Product Catalog | Add, edit, delete products |
-| Inventory | Track stock levels and set alerts |
-| Order Fulfillment | Process and ship customer orders |
+
+| Capability         | Description                                    |
+| -------------------- | ------------------------------------------------ |
+| Manage Shop        | Create and configure store settings            |
+| Product Catalog    | Add, edit, delete products                     |
+| Inventory          | Track stock levels and set alerts              |
+| Order Fulfillment  | Process and ship customer orders               |
 | Supplier Relations | Connect with suppliers, place wholesale orders |
-| Analytics | View sales reports and insights |
-| Staff Management | Add employees with role-based access |
+| Analytics          | View sales reports and insights                |
+| Staff Management   | Add employees with role-based access           |
 
 ### 3. 📦 Supplier (Wholesaler)
 
-| Capability | Description |
-|------------|-------------|
-| Product Catalog | List wholesale products and pricing |
-| Shop Connections | Manage relationships with shops |
-| Order Management | Process bulk orders from shops |
-| Inventory | Track warehouse stock levels |
-| Pricing Tiers | Set volume-based pricing |
-| Analytics | View supplier performance metrics |
+
+| Capability       | Description                         |
+| ------------------ | ------------------------------------- |
+| Product Catalog  | List wholesale products and pricing |
+| Shop Connections | Manage relationships with shops     |
+| Order Management | Process bulk orders from shops      |
+| Inventory        | Track warehouse stock levels        |
+| Pricing Tiers    | Set volume-based pricing            |
+| Analytics        | View supplier performance metrics   |
 
 ### 4. 👑 Admin (Platform)
 
-| Capability | Description |
-|------------|-------------|
-| User Management | Manage all platform users |
-| Shop Approval | Review and approve new shops |
+
+| Capability            | Description                  |
+| ----------------------- | ------------------------------ |
+| User Management       | Manage all platform users    |
+| Shop Approval         | Review and approve new shops |
 | Supplier Verification | Verify and approve suppliers |
-| Platform Settings | Configure global settings |
-| Dispute Resolution | Handle complaints and issues |
-| Financial Reports | Platform-wide analytics |
+| Platform Settings     | Configure global settings    |
+| Dispute Resolution    | Handle complaints and issues |
+| Financial Reports     | Platform-wide analytics      |
 
 ---
 
@@ -231,42 +237,45 @@ This is an **Alibaba-like multi-vendor e-commerce platform** that connects three
 
 ### Frontend (`onlineshop-ui/`)
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **TanStack Start** | 1.132.0 | Full-stack React meta-framework with SSR |
-| **TanStack Router** | 1.132.0 | Type-safe file-based routing |
-| **React** | 19.x | UI library with React Compiler |
-| **Vite** | 7.x | Build tool and dev server |
-| **Tailwind CSS** | 4.x | Utility-first styling |
-| **Shadcn/UI** | Latest | Accessible component library |
-| **Better Auth** | 1.4.x | Authentication (frontend) |
-| **TanStack Query** | 5.x | Server state management |
-| **TanStack Form** | Latest | Form handling with validation |
-| **Zod** | 4.x | Schema validation |
+
+| Technology          | Version | Purpose                                  |
+| --------------------- | --------- | ------------------------------------------ |
+| **TanStack Start**  | 1.132.0 | Full-stack React meta-framework with SSR |
+| **TanStack Router** | 1.132.0 | Type-safe file-based routing             |
+| **React**           | 19.x    | UI library with React Compiler           |
+| **Vite**            | 7.x     | Build tool and dev server                |
+| **Tailwind CSS**    | 4.x     | Utility-first styling                    |
+| **Shadcn/UI**       | Latest  | Accessible component library             |
+| **Better Auth**     | 1.4.x   | Authentication (frontend)                |
+| **TanStack Query**  | 5.x     | Server state management                  |
+| **TanStack Form**   | Latest  | Form handling with validation            |
+| **Zod**             | 4.x     | Schema validation                        |
 
 ### Backend (`onlineshops-api/`)
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **NestJS** | 11.x | Backend framework |
-| **TypeORM** | 0.3.x | Database ORM |
-| **PostgreSQL** | 16.x | Primary database |
-| **Passport.js** | Latest | Authentication strategies |
-| **JWT** | Latest | Token-based auth |
-| **class-validator** | Latest | DTO validation |
-| **class-transformer** | Latest | Object transformation |
-| **Swagger** | Latest | API documentation |
-| **Bull** | Latest | Job queue (emails, etc.) |
+
+| Technology            | Version | Purpose                   |
+| ----------------------- | --------- | --------------------------- |
+| **NestJS**            | 11.x    | Backend framework         |
+| **TypeORM**           | 0.3.x   | Database ORM              |
+| **PostgreSQL**        | 16.x    | Primary database          |
+| **Passport.js**       | Latest  | Authentication strategies |
+| **JWT**               | Latest  | Token-based auth          |
+| **class-validator**   | Latest  | DTO validation            |
+| **class-transformer** | Latest  | Object transformation     |
+| **Swagger**           | Latest  | API documentation         |
+| **Bull**              | Latest  | Job queue (emails, etc.)  |
 
 ### DevOps & Tools
 
-| Technology | Purpose |
-|------------|---------|
-| **Docker** | Containerization |
-| **Docker Compose** | Local development |
-| **GitHub Actions** | CI/CD pipeline |
-| **ESLint + Prettier** | Code quality |
-| **Vitest / Jest** | Testing |
+
+| Technology            | Purpose           |
+| ----------------------- | ------------------- |
+| **Docker**            | Containerization  |
+| **Docker Compose**    | Local development |
+| **GitHub Actions**    | CI/CD pipeline    |
+| **ESLint + Prettier** | Code quality      |
+| **Vitest / Jest**     | Testing           |
 
 ---
 
@@ -279,7 +288,7 @@ This is an **Alibaba-like multi-vendor e-commerce platform** that connects three
 │      USER       │       │      SHOP       │       │    SUPPLIER     │
 ├─────────────────┤       ├─────────────────┤       ├─────────────────┤
 │ id (PK)         │       │ id (PK)         │       │ id (PK)         │
-│ email           │       │ owner_id (FK)   │──────▶│ user_id (FK)    │
+│ email           │       │ owner_id (FK)   │─────> │  user_id (FK)   │
 │ password_hash   │       │ name            │       │ company_name    │
 │ first_name      │       │ slug            │       │ description     │
 │ last_name       │       │ description     │       │ contact_email   │
@@ -364,23 +373,24 @@ This is an **Alibaba-like multi-vendor e-commerce platform** that connects three
 
 ### Database Tables Summary
 
-| Table | Description |
-|-------|-------------|
-| `users` | All platform users (shoppers, shop owners, suppliers, admins) |
-| `user_addresses` | Shipping/billing addresses for users |
-| `shops` | Online stores on the platform |
-| `products` | Products listed by shops |
-| `categories` | Hierarchical product categories |
-| `orders` | Customer orders from shops |
-| `order_items` | Individual items within an order |
-| `carts` | Shopping carts (per user per shop) |
-| `cart_items` | Items in shopping carts |
-| `reviews` | Product and shop reviews |
-| `suppliers` | Supplier profiles |
-| `supplier_products` | Products offered by suppliers |
-| `shop_suppliers` | Shop-Supplier relationships |
-| `supplier_orders` | Wholesale orders from shops to suppliers |
-| `supplier_order_items` | Items in supplier orders |
+
+| Table                  | Description                                                   |
+| ------------------------ | --------------------------------------------------------------- |
+| `users`                | All platform users (shoppers, shop owners, suppliers, admins) |
+| `user_addresses`       | Shipping/billing addresses for users                          |
+| `shops`                | Online stores on the platform                                 |
+| `products`             | Products listed by shops                                      |
+| `categories`           | Hierarchical product categories                               |
+| `orders`               | Customer orders from shops                                    |
+| `order_items`          | Individual items within an order                              |
+| `carts`                | Shopping carts (per user per shop)                            |
+| `cart_items`           | Items in shopping carts                                       |
+| `reviews`              | Product and shop reviews                                      |
+| `suppliers`            | Supplier profiles                                             |
+| `supplier_products`    | Products offered by suppliers                                 |
+| `shop_suppliers`       | Shop-Supplier relationships                                   |
+| `supplier_orders`      | Wholesale orders from shops to suppliers                      |
+| `supplier_order_items` | Items in supplier orders                                      |
 
 ---
 
@@ -425,142 +435,153 @@ onlineshops-api/src/
 
 #### 🔐 Auth Module (`/api/auth`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| POST | `/register` | Register new user | Public |
-| POST | `/login` | User login | Public |
-| POST | `/logout` | User logout | Authenticated |
-| POST | `/refresh` | Refresh access token | Authenticated |
-| POST | `/forgot-password` | Request password reset | Public |
-| POST | `/reset-password` | Reset password with token | Public |
-| GET | `/me` | Get current user | Authenticated |
-| PATCH | `/me` | Update current user | Authenticated |
+
+| Method | Endpoint           | Description               | Access        |
+| -------- | -------------------- | --------------------------- | --------------- |
+| POST   | `/register`        | Register new user         | Public        |
+| POST   | `/login`           | User login                | Public        |
+| POST   | `/logout`          | User logout               | Authenticated |
+| POST   | `/refresh`         | Refresh access token      | Authenticated |
+| POST   | `/forgot-password` | Request password reset    | Public        |
+| POST   | `/reset-password`  | Reset password with token | Public        |
+| GET    | `/me`              | Get current user          | Authenticated |
+| PATCH  | `/me`              | Update current user       | Authenticated |
 
 #### 👤 Users Module (`/api/users`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/` | List all users | Admin |
-| GET | `/:id` | Get user by ID | Admin |
-| PATCH | `/:id` | Update user | Admin |
-| DELETE | `/:id` | Delete user | Admin |
-| GET | `/:id/addresses` | Get user addresses | Owner/Admin |
-| POST | `/:id/addresses` | Add address | Owner/Admin |
-| PATCH | `/:id/addresses/:addressId` | Update address | Owner/Admin |
-| DELETE | `/:id/addresses/:addressId` | Delete address | Owner/Admin |
+
+| Method | Endpoint                    | Description        | Access      |
+| -------- | ----------------------------- | -------------------- | ------------- |
+| GET    | `/`                         | List all users     | Admin       |
+| GET    | `/:id`                      | Get user by ID     | Admin       |
+| PATCH  | `/:id`                      | Update user        | Admin       |
+| DELETE | `/:id`                      | Delete user        | Admin       |
+| GET    | `/:id/addresses`            | Get user addresses | Owner/Admin |
+| POST   | `/:id/addresses`            | Add address        | Owner/Admin |
+| PATCH  | `/:id/addresses/:addressId` | Update address     | Owner/Admin |
+| DELETE | `/:id/addresses/:addressId` | Delete address     | Owner/Admin |
 
 #### 🏪 Shops Module (`/api/shops`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/` | List all shops | Public |
-| GET | `/:id` | Get shop details | Public |
-| GET | `/slug/:slug` | Get shop by slug | Public |
-| POST | `/` | Create new shop | Authenticated |
-| PATCH | `/:id` | Update shop | Shop Owner |
-| DELETE | `/:id` | Delete shop | Shop Owner/Admin |
-| GET | `/:id/products` | Get shop products | Public |
-| GET | `/:id/orders` | Get shop orders | Shop Owner |
-| GET | `/:id/analytics` | Get shop analytics | Shop Owner |
-| POST | `/:id/staff` | Add staff member | Shop Owner |
-| DELETE | `/:id/staff/:userId` | Remove staff | Shop Owner |
+
+| Method | Endpoint             | Description        | Access           |
+| -------- | ---------------------- | -------------------- | ------------------ |
+| GET    | `/`                  | List all shops     | Public           |
+| GET    | `/:id`               | Get shop details   | Public           |
+| GET    | `/slug/:slug`        | Get shop by slug   | Public           |
+| POST   | `/`                  | Create new shop    | Authenticated    |
+| PATCH  | `/:id`               | Update shop        | Shop Owner       |
+| DELETE | `/:id`               | Delete shop        | Shop Owner/Admin |
+| GET    | `/:id/products`      | Get shop products  | Public           |
+| GET    | `/:id/orders`        | Get shop orders    | Shop Owner       |
+| GET    | `/:id/analytics`     | Get shop analytics | Shop Owner       |
+| POST   | `/:id/staff`         | Add staff member   | Shop Owner       |
+| DELETE | `/:id/staff/:userId` | Remove staff       | Shop Owner       |
 
 #### 📦 Products Module (`/api/products`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/` | List products (with filters) | Public |
-| GET | `/:id` | Get product details | Public |
-| GET | `/slug/:slug` | Get product by slug | Public |
-| POST | `/` | Create product | Shop Owner |
-| PATCH | `/:id` | Update product | Shop Owner |
-| DELETE | `/:id` | Delete product | Shop Owner |
-| POST | `/:id/images` | Upload product images | Shop Owner |
-| DELETE | `/:id/images/:imageId` | Delete product image | Shop Owner |
-| GET | `/:id/reviews` | Get product reviews | Public |
+
+| Method | Endpoint               | Description                  | Access     |
+| -------- | ------------------------ | ------------------------------ | ------------ |
+| GET    | `/`                    | List products (with filters) | Public     |
+| GET    | `/:id`                 | Get product details          | Public     |
+| GET    | `/slug/:slug`          | Get product by slug          | Public     |
+| POST   | `/`                    | Create product               | Shop Owner |
+| PATCH  | `/:id`                 | Update product               | Shop Owner |
+| DELETE | `/:id`                 | Delete product               | Shop Owner |
+| POST   | `/:id/images`          | Upload product images        | Shop Owner |
+| DELETE | `/:id/images/:imageId` | Delete product image         | Shop Owner |
+| GET    | `/:id/reviews`         | Get product reviews          | Public     |
 
 #### 📂 Categories Module (`/api/categories`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/` | List all categories | Public |
-| GET | `/tree` | Get category tree | Public |
-| GET | `/:id` | Get category details | Public |
-| POST | `/` | Create category | Admin |
-| PATCH | `/:id` | Update category | Admin |
-| DELETE | `/:id` | Delete category | Admin |
+
+| Method | Endpoint | Description          | Access |
+| -------- | ---------- | ---------------------- | -------- |
+| GET    | `/`      | List all categories  | Public |
+| GET    | `/tree`  | Get category tree    | Public |
+| GET    | `/:id`   | Get category details | Public |
+| POST   | `/`      | Create category      | Admin  |
+| PATCH  | `/:id`   | Update category      | Admin  |
+| DELETE | `/:id`   | Delete category      | Admin  |
 
 #### 🛒 Cart Module (`/api/cart`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/` | Get user's carts (all shops) | Authenticated |
-| GET | `/shop/:shopId` | Get cart for specific shop | Authenticated |
-| POST | `/items` | Add item to cart | Authenticated |
-| PATCH | `/items/:itemId` | Update cart item quantity | Authenticated |
-| DELETE | `/items/:itemId` | Remove item from cart | Authenticated |
-| DELETE | `/shop/:shopId` | Clear cart for shop | Authenticated |
-| POST | `/checkout` | Checkout cart | Authenticated |
+
+| Method | Endpoint         | Description                  | Access        |
+| -------- | ------------------ | ------------------------------ | --------------- |
+| GET    | `/`              | Get user's carts (all shops) | Authenticated |
+| GET    | `/shop/:shopId`  | Get cart for specific shop   | Authenticated |
+| POST   | `/items`         | Add item to cart             | Authenticated |
+| PATCH  | `/items/:itemId` | Update cart item quantity    | Authenticated |
+| DELETE | `/items/:itemId` | Remove item from cart        | Authenticated |
+| DELETE | `/shop/:shopId`  | Clear cart for shop          | Authenticated |
+| POST   | `/checkout`      | Checkout cart                | Authenticated |
 
 #### 📋 Orders Module (`/api/orders`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/` | List user's orders | Authenticated |
-| GET | `/:id` | Get order details | Order Owner/Shop Owner |
-| POST | `/` | Create order (from cart) | Authenticated |
-| PATCH | `/:id/status` | Update order status | Shop Owner |
-| POST | `/:id/cancel` | Cancel order | Order Owner |
-| GET | `/:id/tracking` | Get tracking info | Order Owner |
+
+| Method | Endpoint        | Description              | Access                 |
+| -------- | ----------------- | -------------------------- | ------------------------ |
+| GET    | `/`             | List user's orders       | Authenticated          |
+| GET    | `/:id`          | Get order details        | Order Owner/Shop Owner |
+| POST   | `/`             | Create order (from cart) | Authenticated          |
+| PATCH  | `/:id/status`   | Update order status      | Shop Owner             |
+| POST   | `/:id/cancel`   | Cancel order             | Order Owner            |
+| GET    | `/:id/tracking` | Get tracking info        | Order Owner            |
 
 #### ⭐ Reviews Module (`/api/reviews`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/product/:productId` | Get product reviews | Public |
-| GET | `/shop/:shopId` | Get shop reviews | Public |
-| POST | `/` | Create review | Authenticated (Purchased) |
-| PATCH | `/:id` | Update review | Review Owner |
-| DELETE | `/:id` | Delete review | Review Owner/Admin |
+
+| Method | Endpoint              | Description         | Access                    |
+| -------- | ----------------------- | --------------------- | --------------------------- |
+| GET    | `/product/:productId` | Get product reviews | Public                    |
+| GET    | `/shop/:shopId`       | Get shop reviews    | Public                    |
+| POST   | `/`                   | Create review       | Authenticated (Purchased) |
+| PATCH  | `/:id`                | Update review       | Review Owner              |
+| DELETE | `/:id`                | Delete review       | Review Owner/Admin        |
 
 #### 🚚 Suppliers Module (`/api/suppliers`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/` | List all suppliers | Shop Owner |
-| GET | `/:id` | Get supplier details | Shop Owner/Supplier |
-| POST | `/` | Register as supplier | Authenticated |
-| PATCH | `/:id` | Update supplier profile | Supplier Owner |
-| GET | `/:id/products` | Get supplier products | Shop Owner |
-| POST | `/:id/products` | Add supplier product | Supplier Owner |
-| PATCH | `/:id/products/:productId` | Update product | Supplier Owner |
-| DELETE | `/:id/products/:productId` | Delete product | Supplier Owner |
-| GET | `/:id/orders` | Get supplier orders | Supplier Owner |
-| PATCH | `/:id/orders/:orderId` | Update order status | Supplier Owner |
+
+| Method | Endpoint                   | Description             | Access              |
+| -------- | ---------------------------- | ------------------------- | --------------------- |
+| GET    | `/`                        | List all suppliers      | Shop Owner          |
+| GET    | `/:id`                     | Get supplier details    | Shop Owner/Supplier |
+| POST   | `/`                        | Register as supplier    | Authenticated       |
+| PATCH  | `/:id`                     | Update supplier profile | Supplier Owner      |
+| GET    | `/:id/products`            | Get supplier products   | Shop Owner          |
+| POST   | `/:id/products`            | Add supplier product    | Supplier Owner      |
+| PATCH  | `/:id/products/:productId` | Update product          | Supplier Owner      |
+| DELETE | `/:id/products/:productId` | Delete product          | Supplier Owner      |
+| GET    | `/:id/orders`              | Get supplier orders     | Supplier Owner      |
+| PATCH  | `/:id/orders/:orderId`     | Update order status     | Supplier Owner      |
 
 #### 🔗 Shop-Supplier Relations (`/api/shop-suppliers`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/shop/:shopId` | Get shop's suppliers | Shop Owner |
-| GET | `/supplier/:supplierId` | Get supplier's shops | Supplier Owner |
-| POST | `/request` | Request supplier connection | Shop Owner |
-| PATCH | `/:id/approve` | Approve connection | Supplier Owner |
-| PATCH | `/:id/reject` | Reject connection | Supplier Owner |
-| DELETE | `/:id` | Remove connection | Either Party |
-| POST | `/orders` | Create supplier order | Shop Owner |
-| GET | `/orders/:id` | Get supplier order details | Either Party |
+
+| Method | Endpoint                | Description                 | Access         |
+| -------- | ------------------------- | ----------------------------- | ---------------- |
+| GET    | `/shop/:shopId`         | Get shop's suppliers        | Shop Owner     |
+| GET    | `/supplier/:supplierId` | Get supplier's shops        | Supplier Owner |
+| POST   | `/request`              | Request supplier connection | Shop Owner     |
+| PATCH  | `/:id/approve`          | Approve connection          | Supplier Owner |
+| PATCH  | `/:id/reject`           | Reject connection           | Supplier Owner |
+| DELETE | `/:id`                  | Remove connection           | Either Party   |
+| POST   | `/orders`               | Create supplier order       | Shop Owner     |
+| GET    | `/orders/:id`           | Get supplier order details  | Either Party   |
 
 #### 📊 Analytics Module (`/api/analytics`)
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/shop/:shopId/sales` | Shop sales analytics | Shop Owner |
-| GET | `/shop/:shopId/products` | Product performance | Shop Owner |
-| GET | `/shop/:shopId/customers` | Customer analytics | Shop Owner |
-| GET | `/supplier/:supplierId/sales` | Supplier sales | Supplier Owner |
-| GET | `/platform/overview` | Platform overview | Admin |
-| GET | `/platform/shops` | All shops analytics | Admin |
+
+| Method | Endpoint                      | Description          | Access         |
+| -------- | ------------------------------- | ---------------------- | ---------------- |
+| GET    | `/shop/:shopId/sales`         | Shop sales analytics | Shop Owner     |
+| GET    | `/shop/:shopId/products`      | Product performance  | Shop Owner     |
+| GET    | `/shop/:shopId/customers`     | Customer analytics   | Shop Owner     |
+| GET    | `/supplier/:supplierId/sales` | Supplier sales       | Supplier Owner |
+| GET    | `/platform/overview`          | Platform overview    | Admin          |
+| GET    | `/platform/shops`             | All shops analytics  | Admin          |
 
 ---
 
@@ -639,58 +660,63 @@ onlineshop-ui/src/routes/
 
 #### 🌐 Public Pages
 
-| Page | Features |
-|------|----------|
-| **Home** | Featured shops, trending products, categories |
-| **Shop Listing** | Browse shops with search & filters |
-| **Shop Storefront** | Shop profile, products, reviews |
+
+| Page                | Features                                           |
+| --------------------- | ---------------------------------------------------- |
+| **Home**            | Featured shops, trending products, categories      |
+| **Shop Listing**    | Browse shops with search & filters                 |
+| **Shop Storefront** | Shop profile, products, reviews                    |
 | **Product Details** | Images, description, pricing, reviews, add to cart |
-| **Categories** | Hierarchical category browsing |
-| **Search Results** | Global search across products and shops |
+| **Categories**      | Hierarchical category browsing                     |
+| **Search Results**  | Global search across products and shops            |
 
 #### 🛒 Shopper Dashboard
 
-| Page | Features |
-|------|----------|
-| **Cart** | View items by shop, update quantities, checkout |
-| **Checkout** | Address selection, payment, order confirmation |
-| **Orders** | Order history, status tracking, reorder |
-| **Account** | Profile management, addresses, preferences |
+
+| Page         | Features                                        |
+| -------------- | ------------------------------------------------- |
+| **Cart**     | View items by shop, update quantities, checkout |
+| **Checkout** | Address selection, payment, order confirmation  |
+| **Orders**   | Order history, status tracking, reorder         |
+| **Account**  | Profile management, addresses, preferences      |
 
 #### 🏪 Shop Owner Dashboard
 
-| Page | Features |
-|------|----------|
-| **Overview** | Sales summary, recent orders, low stock alerts |
-| **Products** | CRUD products, bulk import/export, variants |
-| **Orders** | Order queue, fulfillment, status updates |
-| **Inventory** | Stock levels, reorder points, supplier orders |
+
+| Page          | Features                                            |
+| --------------- | ----------------------------------------------------- |
+| **Overview**  | Sales summary, recent orders, low stock alerts      |
+| **Products**  | CRUD products, bulk import/export, variants         |
+| **Orders**    | Order queue, fulfillment, status updates            |
+| **Inventory** | Stock levels, reorder points, supplier orders       |
 | **Suppliers** | Find suppliers, manage connections, order inventory |
-| **Analytics** | Sales charts, top products, customer insights |
-| **Settings** | Shop profile, payment settings, shipping zones |
+| **Analytics** | Sales charts, top products, customer insights       |
+| **Settings**  | Shop profile, payment settings, shipping zones      |
 
 #### 📦 Supplier Dashboard
 
-| Page | Features |
-|------|----------|
-| **Overview** | Order summary, connected shops, revenue |
-| **Products** | Wholesale catalog, pricing tiers, stock |
-| **Orders** | Incoming orders, fulfillment, tracking |
-| **Shops** | Connected shops, pending requests |
-| **Analytics** | Sales performance, top products |
-| **Settings** | Company profile, minimum orders, terms |
+
+| Page          | Features                                |
+| --------------- | ----------------------------------------- |
+| **Overview**  | Order summary, connected shops, revenue |
+| **Products**  | Wholesale catalog, pricing tiers, stock |
+| **Orders**    | Incoming orders, fulfillment, tracking  |
+| **Shops**     | Connected shops, pending requests       |
+| **Analytics** | Sales performance, top products         |
+| **Settings**  | Company profile, minimum orders, terms  |
 
 #### 👑 Admin Dashboard
 
-| Page | Features |
-|------|----------|
-| **Overview** | Platform stats, pending approvals, alerts |
-| **Users** | User list, roles, ban/unban |
-| **Shops** | Shop approvals, featured shops, violations |
-| **Suppliers** | Verification queue, ratings |
-| **Categories** | Category tree management |
-| **Reports** | Financial reports, platform analytics |
-| **Settings** | Commission rates, policies, configurations |
+
+| Page           | Features                                   |
+| ---------------- | -------------------------------------------- |
+| **Overview**   | Platform stats, pending approvals, alerts  |
+| **Users**      | User list, roles, ban/unban                |
+| **Shops**      | Shop approvals, featured shops, violations |
+| **Suppliers**  | Verification queue, ratings                |
+| **Categories** | Category tree management                   |
+| **Reports**    | Financial reports, platform analytics      |
+| **Settings**   | Commission rates, policies, configurations |
 
 ---
 
@@ -737,17 +763,18 @@ enum UserRole {
 
 ### Permission Matrix
 
-| Resource | Shopper | Shop Owner | Supplier | Admin |
-|----------|---------|------------|----------|-------|
-| Browse Products | ✅ | ✅ | ✅ | ✅ |
-| Add to Cart | ✅ | ✅ | ❌ | ✅ |
-| Place Orders | ✅ | ✅ | ❌ | ✅ |
-| Manage Own Shop | ❌ | ✅ | ❌ | ✅ |
-| Manage Own Products | ❌ | ✅ | ✅ | ✅ |
-| View Shop Orders | ❌ | ✅ (own) | ❌ | ✅ |
-| Manage Suppliers | ❌ | ✅ | ❌ | ✅ |
-| Supplier Dashboard | ❌ | ❌ | ✅ | ✅ |
-| Admin Dashboard | ❌ | ❌ | ❌ | ✅ |
+
+| Resource            | Shopper | Shop Owner | Supplier | Admin |
+| --------------------- | --------- | ------------ | ---------- | ------- |
+| Browse Products     | ✅      | ✅         | ✅       | ✅    |
+| Add to Cart         | ✅      | ✅         | ❌       | ✅    |
+| Place Orders        | ✅      | ✅         | ❌       | ✅    |
+| Manage Own Shop     | ❌      | ✅         | ❌       | ✅    |
+| Manage Own Products | ❌      | ✅         | ✅       | ✅    |
+| View Shop Orders    | ❌      | ✅ (own)   | ❌       | ✅    |
+| Manage Suppliers    | ❌      | ✅         | ❌       | ✅    |
+| Supplier Dashboard  | ❌      | ❌         | ✅       | ✅    |
+| Admin Dashboard     | ❌      | ❌         | ❌       | ✅    |
 
 ---
 
@@ -756,18 +783,19 @@ enum UserRole {
 ### Phase 1: Foundation (Weeks 1-2)
 
 - [ ] **Database Setup**
+
   - [ ] Configure PostgreSQL connection
   - [ ] Set up TypeORM with NestJS
   - [ ] Create base entities (User, Shop, Product)
   - [ ] Implement migrations
-
 - [ ] **Authentication**
+
   - [ ] Integrate Passport.js with JWT
   - [ ] Implement registration/login endpoints
   - [ ] Set up role-based guards
   - [ ] Connect Better Auth frontend with API
-
 - [ ] **Core User Features**
+
   - [ ] User profile management
   - [ ] Address management
   - [ ] Role assignment
@@ -775,17 +803,18 @@ enum UserRole {
 ### Phase 2: Shop & Products (Weeks 3-4)
 
 - [ ] **Shop Module**
+
   - [ ] Shop CRUD operations
   - [ ] Shop settings & customization
   - [ ] Staff management
-
 - [ ] **Product Module**
+
   - [ ] Product CRUD with images
   - [ ] Category management
   - [ ] Product variants (size, color)
   - [ ] Search & filtering
-
 - [ ] **Frontend Shop Pages**
+
   - [ ] Shop listing page
   - [ ] Shop storefront
   - [ ] Product details page
@@ -794,17 +823,18 @@ enum UserRole {
 ### Phase 3: Shopping Experience (Weeks 5-6)
 
 - [ ] **Cart Module**
+
   - [ ] Add/remove items
   - [ ] Cart persistence
   - [ ] Cart per shop
-
 - [ ] **Order Module**
+
   - [ ] Checkout flow
   - [ ] Order creation
   - [ ] Order status management
   - [ ] Order history
-
 - [ ] **Frontend Shopping**
+
   - [ ] Cart page
   - [ ] Checkout page
   - [ ] Order tracking
@@ -813,16 +843,17 @@ enum UserRole {
 ### Phase 4: Supplier Network (Weeks 7-8)
 
 - [ ] **Supplier Module**
+
   - [ ] Supplier registration
   - [ ] Wholesale product catalog
   - [ ] Pricing tiers
-
 - [ ] **Shop-Supplier Relations**
+
   - [ ] Connection requests
   - [ ] Supplier orders
   - [ ] Inventory sync
-
 - [ ] **Frontend Supplier**
+
   - [ ] Supplier dashboard
   - [ ] Product management
   - [ ] Order fulfillment
@@ -830,16 +861,17 @@ enum UserRole {
 ### Phase 5: Reviews & Analytics (Weeks 9-10)
 
 - [ ] **Review Module**
+
   - [ ] Product reviews
   - [ ] Shop reviews
   - [ ] Rating system
-
 - [ ] **Analytics Module**
+
   - [ ] Sales analytics
   - [ ] Product performance
   - [ ] Customer insights
-
 - [ ] **Admin Dashboard**
+
   - [ ] User management
   - [ ] Shop/Supplier approval
   - [ ] Platform analytics
@@ -847,16 +879,17 @@ enum UserRole {
 ### Phase 6: Polish & Launch (Weeks 11-12)
 
 - [ ] **Performance**
+
   - [ ] Query optimization
   - [ ] Caching (Redis)
   - [ ] Image optimization
-
 - [ ] **Security**
+
   - [ ] Rate limiting
   - [ ] Input sanitization
   - [ ] CORS configuration
-
 - [ ] **Deployment**
+
   - [ ] Docker setup
   - [ ] CI/CD pipeline
   - [ ] Production configuration
@@ -875,12 +908,14 @@ enum UserRole {
 ### Environment Setup
 
 1. **Clone the repository**
+
 ```bash
 git clone <repository-url>
 cd OnlineShopsManagementSystems
 ```
 
 2. **Set up the database**
+
 ```bash
 # Using Docker
 docker run --name postgres-shops -e POSTGRES_PASSWORD=password -e POSTGRES_DB=onlineshops -p 5432:5432 -d postgres:16
@@ -891,6 +926,7 @@ docker run --name postgres-shops -e POSTGRES_PASSWORD=password -e POSTGRES_DB=on
 3. **Configure environment variables**
 
 **Backend (`onlineshops-api/.env`):**
+
 ```env
 # Database
 DATABASE_HOST=localhost
@@ -910,12 +946,14 @@ NODE_ENV=development
 ```
 
 **Frontend (`onlineshop-ui/.env`):**
+
 ```env
 VITE_API_URL=http://localhost:3001/api
 VITE_APP_URL=http://localhost:3000
 ```
 
 4. **Install dependencies**
+
 ```bash
 # Backend
 cd onlineshops-api
@@ -927,12 +965,14 @@ pnpm install
 ```
 
 5. **Run migrations**
+
 ```bash
 cd onlineshops-api
 pnpm migration:run
 ```
 
 6. **Start development servers**
+
 ```bash
 # Backend (Terminal 1)
 cd onlineshops-api
@@ -944,6 +984,7 @@ pnpm dev
 ```
 
 7. **Access the application**
+
 - Frontend: http://localhost:3000
 - API: http://localhost:3001
 - API Docs: http://localhost:3001/api/docs
