@@ -935,6 +935,237 @@ enum UserRole {
 | Supplier Dashboard  | ❌      | ❌         | ✅       | ✅    |
 | Admin Dashboard     | ❌      | ❌         | ❌       | ✅    |
 
+### Permission-Based Access Control
+
+The API uses a granular permission system mapped to each role. Permissions are defined in `src/common/enums/permission.enum.ts`.
+
+#### Available Permissions
+
+```typescript
+enum Permission {
+  // User permissions
+  USER_READ = 'user:read',
+  USER_CREATE = 'user:create',
+  USER_UPDATE = 'user:update',
+  USER_DELETE = 'user:delete',
+
+  // Shop permissions
+  SHOP_READ = 'shop:read',
+  SHOP_CREATE = 'shop:create',
+  SHOP_UPDATE = 'shop:update',
+  SHOP_DELETE = 'shop:delete',
+  SHOP_MANAGE_STAFF = 'shop:manage_staff',
+
+  // Product permissions
+  PRODUCT_READ = 'product:read',
+  PRODUCT_CREATE = 'product:create',
+  PRODUCT_UPDATE = 'product:update',
+  PRODUCT_DELETE = 'product:delete',
+
+  // Order permissions
+  ORDER_READ = 'order:read',
+  ORDER_CREATE = 'order:create',
+  ORDER_UPDATE = 'order:update',
+  ORDER_CANCEL = 'order:cancel',
+
+  // Cart permissions
+  CART_READ = 'cart:read',
+  CART_UPDATE = 'cart:update',
+
+  // Review permissions
+  REVIEW_READ = 'review:read',
+  REVIEW_CREATE = 'review:create',
+  REVIEW_UPDATE = 'review:update',
+  REVIEW_DELETE = 'review:delete',
+
+  // Supplier permissions
+  SUPPLIER_READ = 'supplier:read',
+  SUPPLIER_CREATE = 'supplier:create',
+  SUPPLIER_UPDATE = 'supplier:update',
+  SUPPLIER_DELETE = 'supplier:delete',
+  SUPPLIER_ORDER_CREATE = 'supplier_order:create',
+  SUPPLIER_ORDER_UPDATE = 'supplier_order:update',
+
+  // Inventory permissions
+  INVENTORY_READ = 'inventory:read',
+  INVENTORY_UPDATE = 'inventory:update',
+
+  // Analytics permissions
+  ANALYTICS_READ = 'analytics:read',
+  ANALYTICS_EXPORT = 'analytics:export',
+
+  // Admin permissions
+  ADMIN_ACCESS = 'admin:access',
+  ADMIN_MANAGE_USERS = 'admin:manage_users',
+  ADMIN_MANAGE_SHOPS = 'admin:manage_shops',
+  ADMIN_VIEW_ALL_ORDERS = 'admin:view_all_orders',
+}
+```
+
+### Using RBAC Decorators
+
+The API provides several decorators for protecting routes:
+
+#### `@Public()` - No Authentication Required
+
+```typescript
+import { Public } from '../auth/decorators';
+
+@Public()
+@Get()
+findAll() {
+  return this.productsService.findAll();
+}
+```
+
+#### `@Auth()` - Require Authentication
+
+```typescript
+import { Auth } from '../auth/decorators';
+
+// Just require authentication (any logged-in user)
+@Auth()
+@Get('profile')
+getProfile() { ... }
+
+// Require specific roles
+@Auth({ roles: [UserRole.ADMIN, UserRole.SHOP_OWNER] })
+@Get('dashboard')
+getDashboard() { ... }
+
+// Require specific permissions
+@Auth({ permissions: [Permission.PRODUCT_CREATE] })
+@Post()
+createProduct() { ... }
+
+// Require both roles AND permissions
+@Auth({ 
+  roles: [UserRole.SHOP_OWNER], 
+  permissions: [Permission.PRODUCT_CREATE] 
+})
+@Post()
+createProduct() { ... }
+```
+
+#### Shorthand Decorators
+
+```typescript
+import { AdminOnly, ShopOwnerOnly, SupplierOnly } from '../auth/decorators';
+
+@AdminOnly()           // Only admins
+@ShopOwnerOnly()       // Shop owners + admins
+@SupplierOnly()        // Suppliers + admins
+```
+
+#### `@CurrentUser()` - Get Authenticated User
+
+```typescript
+import { CurrentUser } from '../auth/decorators';
+
+@Auth()
+@Post()
+create(
+  @CurrentUser('userId') userId: string,  // Get specific field
+  @Body() createDto: CreateDto,
+) {
+  return this.service.create(userId, createDto);
+}
+
+// Or get the entire user object
+@Auth()
+@Get('me')
+getProfile(@CurrentUser() user: { userId: string; email: string; role: string }) {
+  return user;
+}
+```
+
+### API Endpoint Permissions
+
+| Endpoint | Method | Permission / Access |
+|----------|--------|---------------------|
+| **Products** |||
+| `/api/products` | GET | `@Public()` |
+| `/api/products/:id` | GET | `@Public()` |
+| `/api/products` | POST | `PRODUCT_CREATE` |
+| `/api/products/:id` | PATCH | `PRODUCT_UPDATE` |
+| `/api/products/:id` | DELETE | `PRODUCT_DELETE` |
+| **Shops** |||
+| `/api/shops` | GET | `@Public()` |
+| `/api/shops/:id` | GET | `@Public()` |
+| `/api/shops` | POST | `SHOP_CREATE` |
+| `/api/shops/:id` | PATCH | `SHOP_UPDATE` |
+| `/api/shops/:id` | DELETE | `SHOP_DELETE` |
+| **Orders** |||
+| `/api/orders` | GET | `ORDER_READ` |
+| `/api/orders/:id` | GET | `ORDER_READ` |
+| `/api/orders` | POST | `ORDER_CREATE` |
+| `/api/orders/:id` | PATCH | `ORDER_UPDATE` |
+| `/api/orders/:id` | DELETE | `ORDER_CANCEL` |
+| **Carts** |||
+| `/api/carts` | GET | `CART_READ` |
+| `/api/carts/:id` | GET | `CART_READ` |
+| `/api/carts` | POST | `CART_UPDATE` |
+| `/api/carts/:id` | PATCH | `CART_UPDATE` |
+| `/api/carts/:id` | DELETE | `CART_UPDATE` |
+| **Reviews** |||
+| `/api/reviews` | GET | `@Public()` |
+| `/api/reviews/:id` | GET | `@Public()` |
+| `/api/reviews` | POST | `REVIEW_CREATE` |
+| `/api/reviews/:id` | PATCH | `REVIEW_UPDATE` |
+| `/api/reviews/:id` | DELETE | `REVIEW_DELETE` |
+| **Categories** |||
+| `/api/categories` | GET | `@Public()` |
+| `/api/categories/:id` | GET | `@Public()` |
+| `/api/categories` | POST | `@AdminOnly()` |
+| `/api/categories/:id` | PATCH | `@AdminOnly()` |
+| `/api/categories/:id` | DELETE | `@AdminOnly()` |
+| **Users** |||
+| `/api/users` | GET | `@AdminOnly()` |
+| `/api/users/:id` | GET | `USER_READ` |
+| `/api/users` | POST | `@AdminOnly()` |
+| `/api/users/:id` | PATCH | `USER_UPDATE` |
+| `/api/users/:id` | DELETE | `@AdminOnly()` |
+| **Suppliers** |||
+| `/api/suppliers` | GET | `SUPPLIER_READ` |
+| `/api/suppliers/:id` | GET | `SUPPLIER_READ` |
+| `/api/suppliers` | POST | `SUPPLIER_CREATE` |
+| `/api/suppliers/:id` | PATCH | `SUPPLIER_UPDATE` |
+| `/api/suppliers/:id` | DELETE | `SUPPLIER_DELETE` |
+| **Supplier Orders** |||
+| `/api/supplier-orders` | GET | `SUPPLIER_READ` |
+| `/api/supplier-orders/:id` | GET | `SUPPLIER_READ` |
+| `/api/supplier-orders` | POST | `SUPPLIER_ORDER_CREATE` |
+| `/api/supplier-orders/:id` | PATCH | `SUPPLIER_ORDER_UPDATE` |
+| `/api/supplier-orders/:id` | DELETE | `SUPPLIER_ORDER_UPDATE` |
+| **Inventory** |||
+| `/api/inventory` | GET | `INVENTORY_READ` |
+| `/api/inventory/*` | GET | `INVENTORY_READ` |
+| `/api/inventory` | POST | `INVENTORY_UPDATE` |
+| `/api/inventory/:id` | PATCH | `INVENTORY_UPDATE` |
+| `/api/inventory/adjust` | POST | `INVENTORY_UPDATE` |
+| `/api/inventory/:id/reserve` | POST | `INVENTORY_UPDATE` |
+| `/api/inventory/:id/release` | POST | `INVENTORY_UPDATE` |
+| **Analytics** |||
+| `/api/analytics/*` | GET | `ANALYTICS_READ` |
+| **Auth** |||
+| `/api/auth/register` | POST | `@Public()` |
+| `/api/auth/login` | POST | `@Public()` |
+| `/api/auth/refresh` | POST | Refresh Token |
+| `/api/auth/me` | GET | Access Token |
+| `/api/auth/logout` | POST | Access Token |
+| `/api/auth/sessions` | GET | Access Token |
+
+### Role-Permission Mapping
+
+Each role is mapped to specific permissions in `src/auth/rbac/role-permissions.ts`:
+
+| Role | Permissions |
+|------|-------------|
+| **SHOPPER** | Browse products/shops/reviews, manage cart, create/view orders, write reviews, manage own profile |
+| **SHOP_OWNER** | All SHOPPER permissions + create/manage shop, manage products, view shop orders, manage inventory, view analytics, create supplier orders |
+| **SUPPLIER** | Manage own products, view/update inventory, fulfill supplier orders, view analytics |
+| **ADMIN** | All permissions |
+
 ---
 
 ## Implementation Roadmap

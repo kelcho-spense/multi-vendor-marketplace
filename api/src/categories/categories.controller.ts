@@ -10,26 +10,31 @@ import {
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { AdminOnly, Public } from '../auth/decorators';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @AdminOnly()
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto);
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.categoriesService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.categoriesService.findOne(id);
   }
 
+  @AdminOnly()
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -38,6 +43,7 @@ export class CategoriesController {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
+  @AdminOnly()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.categoriesService.remove(id);
