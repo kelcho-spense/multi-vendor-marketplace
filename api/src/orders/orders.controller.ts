@@ -12,6 +12,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Auth, CurrentUser } from '../auth/decorators';
 import { Permission } from '../common/enums/permission.enum';
+import { UserRole } from '../common/enums/user.enum';
 
 @Controller('orders')
 export class OrdersController {
@@ -28,14 +29,21 @@ export class OrdersController {
 
   @Auth({ permissions: [Permission.ORDER_READ] })
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  findAll(
+    @CurrentUser('userId') userId: string,
+    @CurrentUser('role') role: UserRole,
+  ) {
+    return this.ordersService.findAllForUser(userId, role);
   }
 
   @Auth({ permissions: [Permission.ORDER_READ] })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(id);
+  findOne(
+    @Param('id') id: string,
+    @CurrentUser('userId') userId: string,
+    @CurrentUser('role') role: UserRole,
+  ) {
+    return this.ordersService.findOneForUser(id, userId, role);
   }
 
   @Auth({ permissions: [Permission.ORDER_UPDATE] })

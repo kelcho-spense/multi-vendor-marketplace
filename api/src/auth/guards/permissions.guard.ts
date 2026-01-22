@@ -6,14 +6,10 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Permission } from '../../common/enums/permission.enum';
+import { UserRole } from '../../common/enums/user.enum';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 import { roleHasPermission } from '../rbac/role-permissions';
-
-interface AuthenticatedUser {
-  userId: string;
-  email: string;
-  role: string;
-}
+import { AuthenticatedUser } from '../decorators/current-user.decorator';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -41,7 +37,7 @@ export class PermissionsGuard implements CanActivate {
 
     // Check if user's role has all required permissions
     const hasAllPermissions = requiredPermissions.every((permission) =>
-      roleHasPermission(user.role as never, permission),
+      roleHasPermission(user.role as UserRole, permission),
     );
 
     if (!hasAllPermissions) {

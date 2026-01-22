@@ -12,6 +12,7 @@ import {
   Ip,
   Headers,
 } from '@nestjs/common';
+import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { AuthService, AuthResponse, TokensResponse } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -40,6 +41,7 @@ interface RequestWithRefreshToken {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests per minute
   @Post('register')
   async register(
     @Body() registerDto: RegisterDto,
@@ -49,6 +51,7 @@ export class AuthController {
     return this.authService.register(registerDto, userAgent, ip);
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests per minute
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -66,6 +69,7 @@ export class AuthController {
     return this.authService.validateUserById(req.user.userId);
   }
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 requests per minute
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
