@@ -1172,13 +1172,13 @@ Each role is mapped to specific permissions in `src/auth/rbac/role-permissions.t
 
 ### Phase 1: Foundation (Weeks 1-2)
 
-- [ ] **Database Setup**
+- [X] **Database Setup**
 
   - [ ] Configure PostgreSQL connection
   - [ ] Set up TypeORM with NestJS
   - [ ] Create base entities (User, Shop, Product)
   - [ ] Implement migrations
-- [ ] **Authentication**
+- [X] **Authentication & Authorization**
 
   - [ ] Integrate Passport.js with JWT
   - [ ] Implement registration/login endpoints
