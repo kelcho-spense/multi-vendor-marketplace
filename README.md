@@ -738,10 +738,10 @@ onlineshop-ui/src/routes/
        │                   │                   │
        │                   │  3. User Data     │
        │                   │◀──────────────────│
-       │  4. JWT Token     │                   │
+       │  4. Access + Refresh Tokens           │
        │◀──────────────────│                   │
        │                   │                   │
-       │  5. API Request + Token               │
+       │  5. API Request + Access Token        │
        │──────────────────▶│                   │
        │                   │  6. Verify Token   │
        │                   │                   │
@@ -750,6 +750,164 @@ onlineshop-ui/src/routes/
        │  8. Response      │                   │
        │◀──────────────────│◀──────────────────│
 ```
+
+### Token-Based Authentication
+
+The API uses a **dual-token system** for secure authentication:
+
+| Token Type | Lifetime | Purpose | Storage |
+|------------|----------|---------|---------|
+| **Access Token** | 15 minutes | API authentication | Memory/LocalStorage |
+| **Refresh Token** | 7 days | Obtain new access tokens | HttpOnly Cookie/Secure Storage |
+
+#### Token Payloads
+
+**Access Token (JWT)**
+```json
+{
+  "sub": "user-uuid",
+  "email": "user@example.com",
+  "role": "shopper",
+  "type": "access",
+  "iat": 1737561600,
+  "exp": 1737562500
+}
+```
+
+**Refresh Token (JWT)**
+```json
+{
+  "sub": "user-uuid",
+  "tokenId": "refresh-token-uuid",
+  "type": "refresh",
+  "iat": 1737561600,
+  "exp": 1738166400
+}
+```
+
+### Auth API Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/auth/register` | Create new user account | ❌ |
+| POST | `/auth/login` | Login with email/password | ❌ |
+| POST | `/auth/refresh` | Get new tokens using refresh token | ❌ (Refresh Token) |
+| GET | `/auth/me` | Get current user profile | ✅ Access Token |
+| POST | `/auth/logout` | Revoke current session | ✅ Access Token |
+| POST | `/auth/logout-all` | Revoke all sessions | ✅ Access Token |
+| GET | `/auth/sessions` | List active sessions | ✅ Access Token |
+| DELETE | `/auth/sessions/:id` | Revoke specific session | ✅ Access Token |
+
+### Auth Request/Response Examples
+
+#### Register
+
+```bash
+POST /auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "shopper"  // Optional, defaults to "shopper"
+}
+```
+
+**Response:**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs...",
+  "expiresIn": 900,
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "role": "shopper"
+  }
+}
+```
+
+#### Login
+
+```bash
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+**Response:** Same as register
+
+#### Refresh Tokens
+
+```bash
+POST /auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+}
+```
+
+**Response:**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs...",
+  "expiresIn": 900
+}
+```
+
+#### Using Access Token
+
+```bash
+GET /auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+```
+
+### Session Management
+
+Refresh tokens are stored in the database, enabling:
+
+- **Token Revocation**: Logout invalidates the refresh token
+- **Session Tracking**: View all active sessions with device info
+- **Token Rotation**: Each refresh generates a new refresh token (old one is revoked)
+- **Security Detection**: Reusing a revoked token invalidates ALL user sessions
+
+#### Sessions Table Structure
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | UUID | Unique session identifier |
+| `userId` | UUID | Reference to user |
+| `token` | VARCHAR | Hashed refresh token |
+| `expiresAt` | TIMESTAMP | Token expiration time |
+| `isRevoked` | BOOLEAN | Whether token is revoked |
+| `deviceInfo` | VARCHAR | User-Agent string |
+| `ipAddress` | VARCHAR | Client IP address |
+| `createdAt` | TIMESTAMP | Session creation time |
+
+### Environment Variables
+
+```env
+# Access token secret (used for signing access tokens)
+JWT_SECRET=your-secure-access-token-secret-key
+
+# Refresh token secret (separate secret for refresh tokens)
+JWT_REFRESH_SECRET=your-secure-refresh-token-secret-key
+```
+
+> ⚠️ **Security Note**: Use strong, unique secrets in production. Generate with:
+> ```bash
+> openssl rand -base64 64
+> ```
 
 ### Role-Based Access Control (RBAC)
 
