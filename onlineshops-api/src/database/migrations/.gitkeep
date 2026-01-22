@@ -1,0 +1,2 @@
+# Migrations will be generated here
+# Run: pnpm migration:generate src/database/migrations/InitialSchema
