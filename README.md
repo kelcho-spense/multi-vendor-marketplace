@@ -17,6 +17,7 @@ A comprehensive multi-vendor marketplace platform (similar to Alibaba) where **s
 - [Authentication & Authorization](#authentication--authorization)
 - [Implementation Roadmap](#implementation-roadmap)
 - [Getting Started](#getting-started)
+- [Docker Deployment](#docker-deployment)
 - [Project Structure](#project-structure)
 
 ---
@@ -737,10 +738,10 @@ onlineshop-ui/src/routes/
        │                   │                   │
        │                   │  3. User Data     │
        │                   │◀──────────────────│
-       │  4. JWT Token     │                   │
+       │  4. Access + Refresh Tokens           │
        │◀──────────────────│                   │
        │                   │                   │
-       │  5. API Request + Token               │
+       │  5. API Request + Access Token        │
        │──────────────────▶│                   │
        │                   │  6. Verify Token   │
        │                   │                   │
@@ -749,6 +750,164 @@ onlineshop-ui/src/routes/
        │  8. Response      │                   │
        │◀──────────────────│◀──────────────────│
 ```
+
+### Token-Based Authentication
+
+The API uses a **dual-token system** for secure authentication:
+
+| Token Type | Lifetime | Purpose | Storage |
+|------------|----------|---------|---------|
+| **Access Token** | 15 minutes | API authentication | Memory/LocalStorage |
+| **Refresh Token** | 7 days | Obtain new access tokens | HttpOnly Cookie/Secure Storage |
+
+#### Token Payloads
+
+**Access Token (JWT)**
+```json
+{
+  "sub": "user-uuid",
+  "email": "user@example.com",
+  "role": "shopper",
+  "type": "access",
+  "iat": 1737561600,
+  "exp": 1737562500
+}
+```
+
+**Refresh Token (JWT)**
+```json
+{
+  "sub": "user-uuid",
+  "tokenId": "refresh-token-uuid",
+  "type": "refresh",
+  "iat": 1737561600,
+  "exp": 1738166400
+}
+```
+
+### Auth API Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/auth/register` | Create new user account | ❌ |
+| POST | `/auth/login` | Login with email/password | ❌ |
+| POST | `/auth/refresh` | Get new tokens using refresh token | ❌ (Refresh Token) |
+| GET | `/auth/me` | Get current user profile | ✅ Access Token |
+| POST | `/auth/logout` | Revoke current session | ✅ Access Token |
+| POST | `/auth/logout-all` | Revoke all sessions | ✅ Access Token |
+| GET | `/auth/sessions` | List active sessions | ✅ Access Token |
+| DELETE | `/auth/sessions/:id` | Revoke specific session | ✅ Access Token |
+
+### Auth Request/Response Examples
+
+#### Register
+
+```bash
+POST /auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "shopper"  // Optional, defaults to "shopper"
+}
+```
+
+**Response:**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs...",
+  "expiresIn": 900,
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "role": "shopper"
+  }
+}
+```
+
+#### Login
+
+```bash
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+**Response:** Same as register
+
+#### Refresh Tokens
+
+```bash
+POST /auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+}
+```
+
+**Response:**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs...",
+  "expiresIn": 900
+}
+```
+
+#### Using Access Token
+
+```bash
+GET /auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+```
+
+### Session Management
+
+Refresh tokens are stored in the database, enabling:
+
+- **Token Revocation**: Logout invalidates the refresh token
+- **Session Tracking**: View all active sessions with device info
+- **Token Rotation**: Each refresh generates a new refresh token (old one is revoked)
+- **Security Detection**: Reusing a revoked token invalidates ALL user sessions
+
+#### Sessions Table Structure
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | UUID | Unique session identifier |
+| `userId` | UUID | Reference to user |
+| `token` | VARCHAR | Hashed refresh token |
+| `expiresAt` | TIMESTAMP | Token expiration time |
+| `isRevoked` | BOOLEAN | Whether token is revoked |
+| `deviceInfo` | VARCHAR | User-Agent string |
+| `ipAddress` | VARCHAR | Client IP address |
+| `createdAt` | TIMESTAMP | Session creation time |
+
+### Environment Variables
+
+```env
+# Access token secret (used for signing access tokens)
+JWT_SECRET=your-secure-access-token-secret-key
+
+# Refresh token secret (separate secret for refresh tokens)
+JWT_REFRESH_SECRET=your-secure-refresh-token-secret-key
+```
+
+> ⚠️ **Security Note**: Use strong, unique secrets in production. Generate with:
+> ```bash
+> openssl rand -base64 64
+> ```
 
 ### Role-Based Access Control (RBAC)
 
@@ -776,19 +935,250 @@ enum UserRole {
 | Supplier Dashboard  | ❌      | ❌         | ✅       | ✅    |
 | Admin Dashboard     | ❌      | ❌         | ❌       | ✅    |
 
+### Permission-Based Access Control
+
+The API uses a granular permission system mapped to each role. Permissions are defined in `src/common/enums/permission.enum.ts`.
+
+#### Available Permissions
+
+```typescript
+enum Permission {
+  // User permissions
+  USER_READ = 'user:read',
+  USER_CREATE = 'user:create',
+  USER_UPDATE = 'user:update',
+  USER_DELETE = 'user:delete',
+
+  // Shop permissions
+  SHOP_READ = 'shop:read',
+  SHOP_CREATE = 'shop:create',
+  SHOP_UPDATE = 'shop:update',
+  SHOP_DELETE = 'shop:delete',
+  SHOP_MANAGE_STAFF = 'shop:manage_staff',
+
+  // Product permissions
+  PRODUCT_READ = 'product:read',
+  PRODUCT_CREATE = 'product:create',
+  PRODUCT_UPDATE = 'product:update',
+  PRODUCT_DELETE = 'product:delete',
+
+  // Order permissions
+  ORDER_READ = 'order:read',
+  ORDER_CREATE = 'order:create',
+  ORDER_UPDATE = 'order:update',
+  ORDER_CANCEL = 'order:cancel',
+
+  // Cart permissions
+  CART_READ = 'cart:read',
+  CART_UPDATE = 'cart:update',
+
+  // Review permissions
+  REVIEW_READ = 'review:read',
+  REVIEW_CREATE = 'review:create',
+  REVIEW_UPDATE = 'review:update',
+  REVIEW_DELETE = 'review:delete',
+
+  // Supplier permissions
+  SUPPLIER_READ = 'supplier:read',
+  SUPPLIER_CREATE = 'supplier:create',
+  SUPPLIER_UPDATE = 'supplier:update',
+  SUPPLIER_DELETE = 'supplier:delete',
+  SUPPLIER_ORDER_CREATE = 'supplier_order:create',
+  SUPPLIER_ORDER_UPDATE = 'supplier_order:update',
+
+  // Inventory permissions
+  INVENTORY_READ = 'inventory:read',
+  INVENTORY_UPDATE = 'inventory:update',
+
+  // Analytics permissions
+  ANALYTICS_READ = 'analytics:read',
+  ANALYTICS_EXPORT = 'analytics:export',
+
+  // Admin permissions
+  ADMIN_ACCESS = 'admin:access',
+  ADMIN_MANAGE_USERS = 'admin:manage_users',
+  ADMIN_MANAGE_SHOPS = 'admin:manage_shops',
+  ADMIN_VIEW_ALL_ORDERS = 'admin:view_all_orders',
+}
+```
+
+### Using RBAC Decorators
+
+The API provides several decorators for protecting routes:
+
+#### `@Public()` - No Authentication Required
+
+```typescript
+import { Public } from '../auth/decorators';
+
+@Public()
+@Get()
+findAll() {
+  return this.productsService.findAll();
+}
+```
+
+#### `@Auth()` - Require Authentication
+
+```typescript
+import { Auth } from '../auth/decorators';
+
+// Just require authentication (any logged-in user)
+@Auth()
+@Get('profile')
+getProfile() { ... }
+
+// Require specific roles
+@Auth({ roles: [UserRole.ADMIN, UserRole.SHOP_OWNER] })
+@Get('dashboard')
+getDashboard() { ... }
+
+// Require specific permissions
+@Auth({ permissions: [Permission.PRODUCT_CREATE] })
+@Post()
+createProduct() { ... }
+
+// Require both roles AND permissions
+@Auth({ 
+  roles: [UserRole.SHOP_OWNER], 
+  permissions: [Permission.PRODUCT_CREATE] 
+})
+@Post()
+createProduct() { ... }
+```
+
+#### Shorthand Decorators
+
+```typescript
+import { AdminOnly, ShopOwnerOnly, SupplierOnly } from '../auth/decorators';
+
+@AdminOnly()           // Only admins
+@ShopOwnerOnly()       // Shop owners + admins
+@SupplierOnly()        // Suppliers + admins
+```
+
+#### `@CurrentUser()` - Get Authenticated User
+
+```typescript
+import { CurrentUser } from '../auth/decorators';
+
+@Auth()
+@Post()
+create(
+  @CurrentUser('userId') userId: string,  // Get specific field
+  @Body() createDto: CreateDto,
+) {
+  return this.service.create(userId, createDto);
+}
+
+// Or get the entire user object
+@Auth()
+@Get('me')
+getProfile(@CurrentUser() user: { userId: string; email: string; role: string }) {
+  return user;
+}
+```
+
+### API Endpoint Permissions
+
+| Endpoint | Method | Permission / Access |
+|----------|--------|---------------------|
+| **Products** |||
+| `/api/products` | GET | `@Public()` |
+| `/api/products/:id` | GET | `@Public()` |
+| `/api/products` | POST | `PRODUCT_CREATE` |
+| `/api/products/:id` | PATCH | `PRODUCT_UPDATE` |
+| `/api/products/:id` | DELETE | `PRODUCT_DELETE` |
+| **Shops** |||
+| `/api/shops` | GET | `@Public()` |
+| `/api/shops/:id` | GET | `@Public()` |
+| `/api/shops` | POST | `SHOP_CREATE` |
+| `/api/shops/:id` | PATCH | `SHOP_UPDATE` |
+| `/api/shops/:id` | DELETE | `SHOP_DELETE` |
+| **Orders** |||
+| `/api/orders` | GET | `ORDER_READ` |
+| `/api/orders/:id` | GET | `ORDER_READ` |
+| `/api/orders` | POST | `ORDER_CREATE` |
+| `/api/orders/:id` | PATCH | `ORDER_UPDATE` |
+| `/api/orders/:id` | DELETE | `ORDER_CANCEL` |
+| **Carts** |||
+| `/api/carts` | GET | `CART_READ` |
+| `/api/carts/:id` | GET | `CART_READ` |
+| `/api/carts` | POST | `CART_UPDATE` |
+| `/api/carts/:id` | PATCH | `CART_UPDATE` |
+| `/api/carts/:id` | DELETE | `CART_UPDATE` |
+| **Reviews** |||
+| `/api/reviews` | GET | `@Public()` |
+| `/api/reviews/:id` | GET | `@Public()` |
+| `/api/reviews` | POST | `REVIEW_CREATE` |
+| `/api/reviews/:id` | PATCH | `REVIEW_UPDATE` |
+| `/api/reviews/:id` | DELETE | `REVIEW_DELETE` |
+| **Categories** |||
+| `/api/categories` | GET | `@Public()` |
+| `/api/categories/:id` | GET | `@Public()` |
+| `/api/categories` | POST | `@AdminOnly()` |
+| `/api/categories/:id` | PATCH | `@AdminOnly()` |
+| `/api/categories/:id` | DELETE | `@AdminOnly()` |
+| **Users** |||
+| `/api/users` | GET | `@AdminOnly()` |
+| `/api/users/:id` | GET | `USER_READ` |
+| `/api/users` | POST | `@AdminOnly()` |
+| `/api/users/:id` | PATCH | `USER_UPDATE` |
+| `/api/users/:id` | DELETE | `@AdminOnly()` |
+| **Suppliers** |||
+| `/api/suppliers` | GET | `SUPPLIER_READ` |
+| `/api/suppliers/:id` | GET | `SUPPLIER_READ` |
+| `/api/suppliers` | POST | `SUPPLIER_CREATE` |
+| `/api/suppliers/:id` | PATCH | `SUPPLIER_UPDATE` |
+| `/api/suppliers/:id` | DELETE | `SUPPLIER_DELETE` |
+| **Supplier Orders** |||
+| `/api/supplier-orders` | GET | `SUPPLIER_READ` |
+| `/api/supplier-orders/:id` | GET | `SUPPLIER_READ` |
+| `/api/supplier-orders` | POST | `SUPPLIER_ORDER_CREATE` |
+| `/api/supplier-orders/:id` | PATCH | `SUPPLIER_ORDER_UPDATE` |
+| `/api/supplier-orders/:id` | DELETE | `SUPPLIER_ORDER_UPDATE` |
+| **Inventory** |||
+| `/api/inventory` | GET | `INVENTORY_READ` |
+| `/api/inventory/*` | GET | `INVENTORY_READ` |
+| `/api/inventory` | POST | `INVENTORY_UPDATE` |
+| `/api/inventory/:id` | PATCH | `INVENTORY_UPDATE` |
+| `/api/inventory/adjust` | POST | `INVENTORY_UPDATE` |
+| `/api/inventory/:id/reserve` | POST | `INVENTORY_UPDATE` |
+| `/api/inventory/:id/release` | POST | `INVENTORY_UPDATE` |
+| **Analytics** |||
+| `/api/analytics/*` | GET | `ANALYTICS_READ` |
+| **Auth** |||
+| `/api/auth/register` | POST | `@Public()` |
+| `/api/auth/login` | POST | `@Public()` |
+| `/api/auth/refresh` | POST | Refresh Token |
+| `/api/auth/me` | GET | Access Token |
+| `/api/auth/logout` | POST | Access Token |
+| `/api/auth/sessions` | GET | Access Token |
+
+### Role-Permission Mapping
+
+Each role is mapped to specific permissions in `src/auth/rbac/role-permissions.ts`:
+
+| Role | Permissions |
+|------|-------------|
+| **SHOPPER** | Browse products/shops/reviews, manage cart, create/view orders, write reviews, manage own profile |
+| **SHOP_OWNER** | All SHOPPER permissions + create/manage shop, manage products, view shop orders, manage inventory, view analytics, create supplier orders |
+| **SUPPLIER** | Manage own products, view/update inventory, fulfill supplier orders, view analytics |
+| **ADMIN** | All permissions |
+
 ---
 
 ## Implementation Roadmap
 
 ### Phase 1: Foundation (Weeks 1-2)
 
-- [ ] **Database Setup**
+- [X] **Database Setup**
 
   - [ ] Configure PostgreSQL connection
   - [ ] Set up TypeORM with NestJS
   - [ ] Create base entities (User, Shop, Product)
   - [ ] Implement migrations
-- [ ] **Authentication**
+- [X] **Authentication & Authorization**
 
   - [ ] Integrate Passport.js with JWT
   - [ ] Implement registration/login endpoints
@@ -988,6 +1378,96 @@ pnpm dev
 - Frontend: http://localhost:3000
 - API: http://localhost:3001
 - API Docs: http://localhost:3001/api/docs
+
+---
+
+## Docker Deployment
+
+The project includes Docker configuration for containerized deployment of all services.
+
+### Docker Services
+
+| Service | Container | Port | Description |
+|---------|-----------|------|-------------|
+| `postgres` | onlineshops-postgres | 5432 | PostgreSQL 16 database |
+| `api` | onlineshops-api | 3001 | NestJS backend API |
+| `ui` | onlineshops-ui | 3000 | TanStack Start frontend |
+| `pgadmin` | onlineshops-pgadmin | 5050 | Database admin UI (dev only) |
+
+### Docker Files
+
+| File | Purpose |
+|------|--------|
+| `docker-compose.yml` | Orchestrates all services |
+| `onlineshops-api/Dockerfile` | Multi-stage build for NestJS API |
+| `onlineshop-ui/Dockerfile` | Multi-stage build for TanStack Start UI |
+| `onlineshops-api/.dockerignore` | Excludes files from API build |
+| `onlineshop-ui/.dockerignore` | Excludes files from UI build |
+
+### Docker Commands
+
+#### Build and Start All Services
+
+```bash
+# Build and start (without pgAdmin)
+docker compose up -d --build
+
+# Build and start with pgAdmin (development)
+docker compose --profile dev up -d --build
+```
+
+#### Development Workflow
+
+```bash
+# Start only PostgreSQL for local development
+docker compose up -d postgres
+
+# Start PostgreSQL + pgAdmin
+docker compose --profile dev up -d postgres pgadmin
+```
+
+#### Other Commands
+
+```bash
+# Build images without starting
+docker compose build
+
+# View logs
+docker compose logs -f
+
+# View logs for specific service
+docker compose logs -f api
+
+# Stop all services
+docker compose down
+
+# Stop and remove volumes (clean slate)
+docker compose down -v
+
+# Restart a specific service
+docker compose restart api
+```
+
+### Access Points (Docker)
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| API | http://localhost:3001/api |
+| pgAdmin | http://localhost:5050 (admin@example.com / admin) |
+
+### Production Deployment Notes
+
+1. **Environment Variables**: Update the following in `docker-compose.yml` for production:
+   - `POSTGRES_PASSWORD` - Use a strong password
+   - `JWT_SECRET` - Use a secure random string
+   - `CORS_ORIGIN` - Set to your production frontend URL
+
+2. **SSL/TLS**: Configure a reverse proxy (nginx, Traefik) for HTTPS
+
+3. **Database**: Consider using a managed PostgreSQL service (Azure Database, AWS RDS)
+
+4. **Secrets**: Use Docker secrets or environment variable injection instead of hardcoded values
 
 ---
 
