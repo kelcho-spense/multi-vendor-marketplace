@@ -6,7 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
+import { Repository, LessThan, MoreThan } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
@@ -170,8 +170,12 @@ export class AuthService {
       );
     }
 
-    // Verify the token matches
-    if (storedToken.token !== oldRefreshToken) {
+    // Verify the token matches (compare with hashed token)
+    const tokenMatches = await bcrypt.compare(
+      oldRefreshToken,
+      storedToken.token,
+    );
+    if (!tokenMatches) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
@@ -244,18 +248,16 @@ export class AuthService {
       type: 'refresh',
     };
 
-    const refreshSecret = this.configService.get<string>(
-      'JWT_REFRESH_SECRET',
-      'your-refresh-secret-key',
-    );
+    const refreshSecret =
+      this.configService.getOrThrow<string>('JWT_REFRESH_SECRET');
 
     const refreshToken = this.jwtService.sign(refreshPayload, {
       secret: refreshSecret,
       expiresIn: this.refreshTokenExpiresIn,
     });
 
-    // Update the refresh token record with the actual token
-    savedRefreshToken.token = refreshToken;
+    // Update the refresh token record with the hashed token
+    savedRefreshToken.token = await bcrypt.hash(refreshToken, 10);
     await this.refreshTokenRepository.save(savedRefreshToken);
 
     return {
@@ -286,13 +288,15 @@ export class AuthService {
   ): Promise<
     Pick<RefreshToken, 'id' | 'deviceInfo' | 'ipAddress' | 'createdAt'>[]
   > {
-    const tokens = await this.refreshTokenRepository.find({
-      where: { userId, isRevoked: false },
+    return this.refreshTokenRepository.find({
+      where: {
+        userId,
+        isRevoked: false,
+        expiresAt: MoreThan(new Date()),
+      },
       select: ['id', 'deviceInfo', 'ipAddress', 'createdAt'],
       order: { createdAt: 'DESC' },
     });
-
-    return tokens.filter((t) => new Date() < t.expiresAt);
   }
 
   // Revoke a specific session

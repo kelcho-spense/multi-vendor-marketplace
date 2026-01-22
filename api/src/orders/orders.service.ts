@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, OrderStatus, PaymentStatus } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { UserRole } from '../common/enums/user.enum';
 
 @Injectable()
 export class OrdersService {
@@ -59,6 +64,21 @@ export class OrdersService {
     });
   }
 
+  /**
+   * Find orders based on user role:
+   * - ADMIN: can see all orders
+   * - SHOP_OWNER: can see orders for their shops (simplified: all for now)
+   * - SHOPPER: can only see their own orders
+   */
+  async findAllForUser(userId: string, role: UserRole): Promise<Order[]> {
+    if (role === UserRole.ADMIN) {
+      return this.findAll();
+    }
+
+    // For shoppers (and suppliers who shouldn't access orders), only show their own
+    return this.findByUser(userId);
+  }
+
   async findByUser(userId: string): Promise<Order[]> {
     return this.orderRepository.find({
       where: { userId },
@@ -83,6 +103,35 @@ export class OrdersService {
 
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
+    }
+
+    return order;
+  }
+
+  /**
+   * Find a single order with ownership verification
+   */
+  async findOneForUser(
+    id: string,
+    userId: string,
+    role: UserRole,
+  ): Promise<Order> {
+    const order = await this.findOne(id);
+
+    // Admins can access any order
+    if (role === UserRole.ADMIN) {
+      return order;
+    }
+
+    // Shop owners can access orders for their shops
+    // TODO: Add shop ownership check when Shop entity has ownerId
+    // if (role === UserRole.SHOP_OWNER && order.shop?.ownerId === userId) {
+    //   return order;
+    // }
+
+    // Users can only access their own orders
+    if (order.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this order');
     }
 
     return order;

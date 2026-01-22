@@ -129,6 +129,7 @@ All endpoints should follow REST conventions under `/api/` prefix.
 - **TypeScript**: Strict mode in both projects
 - **React**: Using React 19 with React Compiler (babel plugin)
 - **CSS**: Tailwind CSS 4.x (utility-first, no CSS modules)
+- **Unused imports**: Always remove unused imports from files — never leave dead imports
 - Files prefixed with `demo` are examples and can be deleted
 
 ## What's Implemented vs Planned
